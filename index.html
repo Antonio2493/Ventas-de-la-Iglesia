@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Ventas - Iglesia</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Archivo de Estilos -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1>📂Control de Ventas de la Iglesia</h1>
+            <p>Gestión de ingresos, deudas y balance diario de inversión</p>
+            
+            <!-- Selector de Fecha Maestro -->
+            <div class="master-date-container" style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <label for="fecha-maestra" style="font-weight: 600; color: #475569; font-size: 1.05rem;">📅 Fecha de Ventas:</label>
+                <input type="date" id="fecha-maestra" style="padding: 10px 14px; border-radius: 12px; border: 2px solid var(--border); font-family: 'Outfit', sans-serif; font-size: 1rem; background: #f8fafc; color: var(--text);">
+                <button id="btn-ver-todo" class="btn-secondary">📂 Ver Historial Completo</button>
+            </div>
+        </header>
+
+        <!-- 1. Tarjeta para Registrar la Inversión del Día y Stock (¡AHORA VA PRIMERO!) -->
+        <section class="card inversion-card" id="seccion-inversion">
+            <h2>💰 Inversión y Stock del Día (<span id="label-fecha-activa" style="color: var(--primary);">--/--/----</span>)</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="input-inversion-producto">Nombre del Producto / Comida</label>
+                    <input type="text" id="input-inversion-producto" placeholder="Ej. Salchipapas">
+                </div>
+                <div class="form-group">
+                    <label for="input-inversion-cantidad">Cantidad Cocinada / Preparada</label>
+                    <input type="number" id="input-inversion-cantidad" placeholder="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="input-inversion-dia">Monto Invertido (₡)</label>
+                    <input type="number" id="input-inversion-dia" placeholder="0" value="0">
+                </div>
+            </div>
+            <button type="button" id="btn-guardar-inversion" class="btn-primary" style="margin-top: 15px;">Guardar Inversión y Stock de este Día</button>
+        </section>
+
+        <!-- 2. Tarjeta de Registro de Venta / Abono (¡AHORA VA DESPUÉS!) -->
+        <section class="card" id="seccion-registro">
+            <h2>📝 Registrar Venta o Abono de Hermano</h2>
+            <form id="form-venta">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="venta-hermano">Hermano / Comprador</label>
+                        <input type="text" id="venta-hermano" placeholder="Ej. Hermano Juan Pérez" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="venta-concepto">Artículo Vendido</label>
+                        <input type="text" id="venta-concepto" placeholder="Ej. Salchipapas" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="venta-cantidad">Cantidad Vendida</label>
+                        <input type="number" id="venta-cantidad" placeholder="1" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="venta-pago">Monto Pagado (₡)</label>
+                        <input type="number" id="venta-pago" placeholder="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="venta-debe">Monto que Debe (₡)</label>
+                        <input type="number" id="venta-debe" placeholder="0" value="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 15px;">Guardar Registro</button>
+            </form>
+        </section>
+
+       <!-- Tarjetas de Resumen y Comparativa -->
+        <section class="summary-container">
+            <div class="summary-card pagado">
+                <h3>Total Ingresos (Cobrado)</h3>
+                <p id="total-pagado">₡0</p>
+            </div>
+            <div class="summary-card debe">
+                <h3>Total Pendiente (Debe)</h3>
+                <p id="total-debe">₡0</p>
+            </div>
+            <div class="summary-card inversion" id="tarjeta-inversion-resumen">
+                <h3>Inversión del Día</h3>
+                <p id="total-inversion-view">₡0</p>
+            </div>
+            <!-- ¡Aquí agregamos el id="tarjeta-stock"! -->
+            <div class="summary-card stock" id="tarjeta-stock" style="border-top: 5px solid #6366f1;">
+                <h3>Control de Stock (Vendido / Preparado)</h3>
+                <p id="total-stock-view" style="font-size: 1.3rem;">0 / 0</p>
+            </div>
+            <div class="summary-card balance" id="card-balance-container">
+                <h3 id="titulo-balance">Balance Neto (Ganancia / Pérdida)</h3>
+                <p id="total-balance">₡0</p>
+            </div>
+        </section>
+
+        <!-- Tabla de Registros e Historial -->
+        <section class="card">
+            <div class="table-header">
+                <h2>📋 Listado de Movimientos</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hermano</th>
+                            <th>Artículo</th>
+                            <th>Cant.</th>
+                            <th>Pagó</th>
+                            <th>Debe</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-ventas">
+                        <!-- Los datos se cargan dinámicamente desde Firebase -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- SDKs de Firebase (Versión Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Archivo de Configuración de Firebase -->
+    <script src="firebase-config.js"></script>
+    <!-- Lógica de la aplicación -->
+    <script src="app.js"></script>
+</body>
+</html>
